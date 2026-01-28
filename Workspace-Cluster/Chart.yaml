@@ -1,0 +1,15 @@
+apiVersion: v2 # Using Helm Chart API 3 ~
+name: workspace-chart
+description: A helm chart for personal workspace
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+
+maintainers:
+  - name: wayfarer6
+    email: shseo2023@gmail.com
+
+keywords:
+  - dev
+

@@ -1,0 +1,43 @@
+image:
+  repository: nginx
+  tag: "1.21.6"
+  pullpolicy: IfNotPresent
+
+
+# Service 
+
+service:
+  type: ClusterIP
+  port: 3080
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+replicaCount: 1
+
+# ingress 설정 
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: gitea.local
+      paths: /
+    - host: code-server.local
+      paths: /
+    - host: jenkins.local
+      paths: /
+    # Argo CD
+
+
+env:
+  - name: EXAMPLE_ENV_VAR
+    value: "production"
+  - name: ANOTHER_ENV_VAR
+    value: "debug"
