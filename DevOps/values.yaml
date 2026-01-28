@@ -33,10 +33,6 @@ ingress:
       paths: /
     - host: jenkins.local
       paths: /
-    - host: argocd.local
-      paths: /
-    - host: siyuan.local
-      paths: /
 
 
 

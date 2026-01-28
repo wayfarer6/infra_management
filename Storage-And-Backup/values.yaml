@@ -3,5 +3,5 @@ ingress:
   className: ""
   annotations: {}
   hosts:
-    - host: audiobookshelf.local
+    - host: minio.local
       paths: /

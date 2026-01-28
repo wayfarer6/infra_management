@@ -41,4 +41,4 @@ Repository: 차트를 저장하고 배포할 수 있는 저장소
 ### 기타 
 
 - 편의성을 위해  wireguard 사용!
-
+- 기존에 쓰던 Nextcloud aio를 포기할 수 없어 사용함.

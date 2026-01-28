@@ -1,4 +1,7 @@
-
-
-# bento 등등...
-
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: bento.local
+      paths: /

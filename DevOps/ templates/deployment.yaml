@@ -18,7 +18,3 @@ containers:
     image: jenkins/jenkins:lts
     ports:
       - containerPort: 4080
-  - name: argocd.local
-    image: argoproj/argocd:v2.7.7
-    ports:
-      - containerPort: 6080
