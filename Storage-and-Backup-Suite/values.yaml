@@ -1,0 +1,5 @@
+minio:
+  image: minio/minio:latest
+  storageSize: 500Gi
+  rootUser: "ssh1032007"
+  rootPassword: "lsm0308@2007Y" # 8자 이상 권장

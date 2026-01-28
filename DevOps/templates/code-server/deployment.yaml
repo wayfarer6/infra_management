@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: code-server
+      app: codeServer
   template:
     metadata:
       labels:

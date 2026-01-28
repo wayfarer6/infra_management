@@ -1,6 +1,6 @@
 apiVersion: v2 # Using Helm Chart API 3 ~
-name: workspace-chart
-description: A helm chart for personal workspace
+name: DevOps
+description: A helm chart for personal DevOps workspace
 type: application
 version: 0.1.0
 appVersion: "0.1.0"

@@ -1,5 +1,0 @@
-minio:
-  image: minio/minio:latest
-  storageSize: 500Gi
-  rootUser: "admin"
-  rootPassword: "strongpassword123" # 8자 이상 권장

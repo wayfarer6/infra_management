@@ -1,4 +1,4 @@
-code-server:
+codeServer:
   # 외부에서 접속할 때 사용할 비밀번호
   password: "your-secure-password-here"
 
@@ -14,4 +14,5 @@ gitea:
 jenkins:
   image: jenkins/jenkins:lts
   port: 8080
+  adminPassword: "your-password"
   agentPort: 50000 # 슬레이브 노드 연결용
