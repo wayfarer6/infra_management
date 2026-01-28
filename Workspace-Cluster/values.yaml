@@ -33,7 +33,9 @@ ingress:
       paths: /
     - host: jenkins.local
       paths: /
-    # Argo CD
+    - host: argocd.local
+      paths: /
+
 
 
 env:

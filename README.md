@@ -17,3 +17,24 @@ Values: 템플릿에 주입되는 설정값 (환경별로 다르게 적용 가�
 Templates: Kubernetes YAML을 동적으로 생성하는 Go 템플릿 파일
 
 Repository: 차트를 저장하고 배포할 수 있는 저장소
+
+
+## Deployment
+- pod를 어떻게 실행할지 정의
+- 이미지 , replica 수
+- 컨테이너 포트, 환경 변수, 리소스 요청 / 제한 
+- 업데이트 전략
+
+
+## Service 
+
+- pod 들이 네트워크 상에서 접근 가능하게 만드는 추상화 계층
+
+- pod를 묶어서 하나의 엔드 포인트 (ip/port) 제공
+- ClusterIP,nodeport,loadbalancer 
+- 로드 밸런싱 제공
+
+
+### 기타 
+
+- 편의성을 위해 Docker에서 npm reverse proxy, wireguard, 사용
