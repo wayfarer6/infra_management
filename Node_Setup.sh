@@ -4,7 +4,7 @@ sudo dnf update -y
 
 # Add ipv6 module and WireGuard tools and others
 
-sudo dnf install wireguard-tools containerd crontab -y
+sudo dnf install wireguard-tools  -y
 sudo modprobe ipv6
 sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
 sudo sysctl -w net.ipv6.conf.default.disable_ipv6=0
@@ -42,7 +42,7 @@ export KUBECONFIG=~/.kube/config
 sudo /usr/local/bin/k3s kubectl config view --raw > "$KUBECONFIG"
 chmod 600 "$KUBECONFIG"
 chown "$USER:$USER" "$KUBECONFIG"
-
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 
 # Verify kubectl access
 kubectl get nodes
@@ -53,13 +53,14 @@ sudo dnf install -y git wget vim nano tar unzip
 
 # Install Docker (Docker 기반 컨테이너 사용시)
 sudo dnf install -y dnf-plugins-core
-sudo dnf config-manager --add-repo https://download.docker.com/linux/centos
+sudo dnf -y install yum-utils
+sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
 sudo dnf install -y docker-ce docker-ce-cli containerd.io
 sudo systemctl enable docker --now
 sudo usermod -aG docker $USER
 
 # Install monitoring tools (essential)
-sudo dnf install -y htop iftop nload
+sudo dnf install -y  htop 
 echo "Node setup completed."
 
 # Reboot to apply all changes
