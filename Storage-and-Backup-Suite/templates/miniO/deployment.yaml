@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-deployment
+spec:
+  replicas: 1 # 데이터 정합성을 위해 SQLite처럼 1개 유지를 권장합니다.
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      securityContext:
+        fsGroup: 1000 # 볼륨 쓰기 권한을 위해 필요
+      containers:
+        - name: minio
+          image: {{ .Values.minio.image }}
+          # server 명령 뒤에 데이터 경로와 콘솔 주소를 명시해야 합니다.
+          args: ["server", "/data", "--console-address", ":9001"]
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+          securityContext:
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: storage
+              mountPath: /data
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: minio-pvc

@@ -1,0 +1,11 @@
+audiobookshelf:
+  image: advplyr/audiobookshelf:latest
+  port: 80
+  # 실제 오디오북 파일이 저장되는 곳 (용량 넉넉히)
+  audiobooks:
+    storageSize: 200Gi
+  # 설정 및 메타데이터 저장소
+  config:
+    storageSize: 20Gi
+  # 공개 도메인 설정 시
+  host: audio.yourdomain.com #설정

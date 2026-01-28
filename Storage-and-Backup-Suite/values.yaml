@@ -1,7 +1,0 @@
-ingress:
-  enabled: true
-  className: ""
-  annotations: {}
-  hosts:
-    - host: minio.local
-      paths: /

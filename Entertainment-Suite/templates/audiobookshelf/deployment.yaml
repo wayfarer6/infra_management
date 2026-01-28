@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audiobookshelf
+  namespace: entertainment-suite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookshelf
+  template:
+    metadata:
+      labels:
+        app: audiobookshelf
+    spec:
+      containers:
+        - name: audiobookshelf
+          image: {{ .Values.audiobookshelf.image }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: audiobooks
+              mountPath: /audiobooks
+            - name: metadata
+              mountPath: /metadata # 가끔 메타데이터 폴더를 따로 빼기도 합니다.
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: abs-config-pvc
+        - name: audiobooks
+          persistentVolumeClaim:
+            claimName: abs-audio-pvc
+        - name: metadata
+          emptyDir: {} # 혹은 별도 PVC 연결 가능

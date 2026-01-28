@@ -1,0 +1,23 @@
+# 메타데이터 및 DB용
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: abs-config-pvc
+  namespace: entertainment-suite
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ .Values.audiobookshelf.config.storageSize }}
+---
+# 실제 오디오북 음원 파일용
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: abs-audio-pvc
+  namespace: entertainment
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ .Values.audiobookshelf.audiobooks.storageSize }}

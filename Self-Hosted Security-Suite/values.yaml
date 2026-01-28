@@ -1,15 +1,14 @@
+twoFactor:
+  image: 2fa:latest  # 실제 사용하시는 이미지 이름으로 변경하세요
+  replicaCount: 1
+  port: 8080         # 해당 앱이 사용하는 포트로 수정
+  host: 2fa.local
+  # 앱에 필요한 환경변수들
+  encryptionKey: "super-secret-key-123"
 
-# 1. vaultwarden , 2fa (2차 인증), 3. wg easy (접속용)
-ingress:
-  enabled: true
-  className: ""
-  annotations: {}
-  hosts:
-    - host: password.local
-      paths: /
-    - host: 2fa.local
-      paths: /
-    - host: wireguard.local
-      paths: /
+vaultwarden:
+  adminToken: "your-very-secure-password" # 관리자 페이지 접속 비번
 
-      
+
+wireguard:
+  externalIp: "1.2.3.4" # 외부 접속용 IP # ddns 주소등
