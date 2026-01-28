@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard
+  template:
+    metadata:
+      labels:
+        app: wireguard
+    spec:
+      containers:
+        - name: wireguard
+          image: ghcr.io/wg-easy/wg-easy:latest # wg-easy 기준
+          env:
+            - name: WG_HOST
+              value: "{{ .Values.wireguard.externalIp | quote }}" # 외부 접속용 IP
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN  # 네트워크 인터페이스 생성/수정 권한
+                - SYS_MODULE # 커널 모듈 관련 (필요한 경우)
+          ports:
+            - containerPort: 51820
+              protocol: UDP
+            - containerPort: 51821 # UI용 (wg-easy)
+              protocol: TCP
+          volumeMounts:
+            - name: wireguard-data
+              mountPath: /etc/wireguard # wg-easy 데이터 경로
+      volumes:
+        - name: wireguard-data
+          persistentVolumeClaim:
+            claimName: wireguard-pvc

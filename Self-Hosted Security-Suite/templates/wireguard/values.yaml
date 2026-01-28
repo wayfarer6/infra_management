@@ -1,0 +1,2 @@
+wireguard:
+  externalIp: "1.2.3.4" # 외부 접속용 IP 

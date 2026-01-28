@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      securityContext:
+        fsGroup: 1000 # Jenkins 데이터 권한
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          env:
+            - name: JENKINS_OPTS
+              value: "--prefix=/jenkins" # 인그레스 경로 설정 시 유용
+            - name: CASC_JENKINS_CONFIG # 설정 자동화 시 사용
+              value: "/var/jenkins_home/casc_configs"
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          securityContext:
+            # 도커 소켓에 접근하려면 보통 root(0) 권한이 필요합니다.
+            runAsUser: 0 
+          volumeMounts:
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+            - name: docker-sock
+              mountPath: /var/run/docker.sock # 호스트 도커 엔진 빌려쓰기
+      volumes:
+        - name: jenkins-data
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock # 실제 호스트의 소켓 위치

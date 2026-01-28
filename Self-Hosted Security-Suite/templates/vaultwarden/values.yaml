@@ -1,0 +1,2 @@
+vaultwarden:
+  adminToken: "your-very-secure-password" # 관리자 페이지 접속 비번

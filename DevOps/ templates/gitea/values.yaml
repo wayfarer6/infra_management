@@ -1,0 +1,8 @@
+gitea:
+  image: gitea/gitea:latest
+  port: 3000
+  sshPort: 22
+  domain: git.local
+  storageSize: 5Gi
+  # SQLite3 사용 시 DB 관련 설정은 생략하거나 아래와 같이 지정
+  databaseType: sqlite3

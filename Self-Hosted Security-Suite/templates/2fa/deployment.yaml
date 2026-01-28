@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: two-factor-deployment
+spec:
+  replicas: {{ .Values.twoFactor.replicaCount }}
+  selector:
+    matchLabels:
+      app: two-factor
+  template:
+    metadata:
+      labels:
+        app: two-factor
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: two-factor
+          image: {{ .Values.twoFactor.image }}
+          ports:
+            - containerPort: {{ .Values.twoFactor.port }}
+          env:
+            - name: APP_ENCRYPTION_KEY # 앱에서 사용하는 환경변수명에 맞게 수정
+              valueFrom:
+                secretKeyRef:
+                  name: two-factor-secret
+                  key: ENCRYPTION_KEY
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: storage
+              mountPath: /app/data # 앱의 데이터 저장 경로에 맞게 수정
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: two-factor-pvc
+        - name: tmp
+          emptyDir: {}

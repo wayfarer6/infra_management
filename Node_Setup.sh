@@ -2,9 +2,9 @@
 
 sudo dnf update -y
 
-# Add ipv6 module and WireGuard tools
+# Add ipv6 module and WireGuard tools and others
 
-sudo dnf install wireguard-tools -y
+sudo dnf install wireguard-tools containerd crontab -y
 sudo modprobe ipv6
 sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
 sudo sysctl -w net.ipv6.conf.default.disable_ipv6=0

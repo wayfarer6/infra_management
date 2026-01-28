@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-server
+  template:
+    metadata:
+      labels:
+        app: code-server
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: code-server
+          image: "codercom/code-server:latest"
+          ports:
+            - containerPort: 8080 # code-server 기본 포트는 보통 8080입니다.
+          env:
+            - name: PASSWORD  # code-server가 인식하는 환경변수명
+              valueFrom:
+                secretKeyRef:
+                  name: code-server-secret
+                  key: PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false 
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: code-server-data
+              mountPath: /home/coder # 설정과 프로젝트가 저장되는 경로
+      volumes:
+        - name: code-server-data
+          persistentVolumeClaim:
+            claimName: code-server-pvc

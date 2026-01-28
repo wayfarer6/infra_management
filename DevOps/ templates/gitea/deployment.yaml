@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      securityContext:
+        fsGroup: 1000   # 파일 권한 문제를 방지하기 위해 중요
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: gitea
+          image: {{ .Values.gitea.image }}
+          ports:
+            - containerPort: 3000
+            - containerPort: 22
+          env:
+            - name: GITEA__database__DB_TYPE
+              value: "sqlite3"
+            - name: GITEA__server__DOMAIN
+              value: {{ .Values.gitea.domain | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN # 파일 소유권 변경을 위해 필요할 수 있음
+          volumeMounts:
+            - name: gitea-data
+              mountPath: /data
+      volumes:
+        - name: gitea-data
+          persistentVolumeClaim:
+            claimName: gitea-pvc

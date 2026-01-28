@@ -1,0 +1,3 @@
+codeServer:
+  # 외부에서 접속할 때 사용할 비밀번호
+  password: "your-secure-password-here"

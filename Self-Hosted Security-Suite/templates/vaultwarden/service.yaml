@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden # 누락되었던 selector 추가
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+    spec:
+      # Pod 레벨: 공통 유저/그룹 설정
+      securityContext:
+        fsGroup: 1000 
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: vaultwarden
+          image: vaultwarden/server:latest
+          ports:
+            - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true # root만 읽기 가능
+            capabilities:
+              drop:
+                - ALL #불필요 권한 제거 
+          volumeMounts:
+            - name: vaultwarden-data
+              mountPath: /data
+        # - name: tmp
+        #   mountPath: /tmp
+      volumes:
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: vaultwarden-pvc
+      # - name: tmp
+      #   emptyDir: {}
