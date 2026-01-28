@@ -35,6 +35,8 @@ ingress:
       paths: /
     - host: argocd.local
       paths: /
+    - host: siyuan.local
+      paths: /
 
 
 

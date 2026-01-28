@@ -34,7 +34,11 @@ Repository: 차트를 저장하고 배포할 수 있는 저장소
 - ClusterIP,nodeport,loadbalancer 
 - 로드 밸런싱 제공
 
+### Monitoring
+- VictoriaMetrics
+
 
 ### 기타 
 
-- 편의성을 위해 Docker에서 npm reverse proxy, wireguard, 사용
+- 편의성을 위해  wireguard 사용!
+
