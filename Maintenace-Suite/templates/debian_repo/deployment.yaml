@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: debian-repo-deployment 
+spec:
+    replicas: 1  # {.Values.debianRepo.replicaCount }}
+    selector:
+        matchLabels:
+            app: debian-repo-server
+    template:
+        metadata:
+            labels:
+                app: debian-repo-server
+    containers:
+        - name: debian-repo-server
+          image: {{ .Values.debianRepo.image }}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: repo-storage
+              mountPath: /var/www/html/debian  # Debian 저장소의 경로에 맞게 수정
+        - name: debian-repo-helper
+            image: {{ .Values.debianRepo.helperImage }}
+            volumeMounts:
+                - name: repo-storage
+                mountPath: /var/www/html/debian  # 동일한 저장소 경로에 마운트
+    spec:
+        securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+
+      volumes:
+        - name: repo-storage
+          persistentVolumeClaim:
+            claimName: debian-repo-pvc
+        
