@@ -140,3 +140,13 @@ kubectl apply -f ingress.yaml -f service.yaml
 # 또는 kubectl apply -f ./nextcloud-aio-for-traefik-ingress-controller/
 
 ```
+
+### Optional (Packer를 통한 gold image 만들기)
+
+- Packer로 구울때 Ansible을 호출해서 필요한 네트워크,보안,스토리지,패키지 설치 후 vhd나 ami 등으로 뽑아낼수 있음.
+
+#### Ansible를 통한 vps 설정 관리 
+
+- Ansible을 통해 전체 vps의 설정을 일치시키고, 코드를 통해 전체 인프라의 보안 강화, 인프라 정책 수정등을 용이하게 관리 가능함.
+
+- CI/CD 시 이미지 빌드 파이프라인과 인프라 배포 파이프 라인 구분하면 됨.
