@@ -18,6 +18,8 @@ Templates: Kubernetes YAML을 동적으로 생성하는 Go 템플릿 파일
 
 Repository: 차트를 저장하고 배포할 수 있는 저장소
 
+Ingress: 각 네임 스페이스별로 정의 됨, Ingress Controller(NGINX, Traefik 등)가 이를 읽어 라우팅 테이블을 구성, 각 서비스의 접근을 가능하게 함.
+ - Ingress는 네임스페이스 단위로 정의되지만, Ingress Controller는 클러스터 전체를 바라본다 , 햇갈리지 말자.
 
 ## Deployment
 - pod를 어떻게 실행할지 정의
@@ -84,4 +86,23 @@ Ingress에서 cert-manager.io/cluster-issuer annotation을 붙이고, tls.secret
 
 ## 설치 순서 
 
-# kubectl apply 순서(Secret → ClusterIssuer → Certificate → Ingress)
+# 필수 유틸리티 설치 및 방화벽 설정 
+
+# duckdns 설정 (이거는 각자 알아서)
+
+# k3s 초기 설정 (cert-manager 설치, 와일드카드 인증서 발급)
+
+   # kubectl apply 순서(Secret → ClusterIssuer → Certificate → Ingress)
+
+# 각 차트 설치
+
+
+# nextcloud aio의 경우에는 traefik 에 별도 등록 해야 함
+
+```bash
+
+kubectl apply -f ingress.yaml -f service.yaml
+
+# 또는 kubectl apply -f ./nextcloud-aio-for-traefik-ingress-controller/
+
+```

@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextcloud-ingress
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+spec:
+  rules:
+    - host: nextcloud.shseo0308.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextcloud-aio
+                port:
+                  number: 443   # Nextcloud HTTPS
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: nextcloud-aio
+                port:
+                  number: 8080  # AIO 관리 UI
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - nextcloud.shseo0308.duckdns.org

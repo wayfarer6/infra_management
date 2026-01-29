@@ -63,6 +63,12 @@ sudo usermod -aG docker $USER
 sudo dnf install -y  htop 
 echo "Node setup completed."
 
+# install Velero
+
+tar -xvf velero-v1.17.2-linux-amd64.tar.gz
+sudo mv velero-v1.17.2-linux-amd64/velero /usr/local/bin/
+
+
 # Reboot to apply all changes
 sudo reboot
 

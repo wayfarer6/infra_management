@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export root_domain="example.com"
+export root_domain="shseo0308.duckdns.org"
 
 # Update system packages
 sudo dnf update -y
@@ -107,3 +107,14 @@ kubectl apply -f ./cert-manager/traefik-disable-acme.yaml
 
 kubectl get pods -n traefik
 
+
+
+# Install nextcloud-aio (Traefik Ingress Controller에 별도 등록!)
+
+kubectl apply -f ./nextcloud-aio-for-traefik-ingress-controller/
+./nextcloud-AIO-setup.sh
+
+# Talk용 3178 수동 포트포워딩
+sudo firewall-cmd --add-port=3178/tcp --permanent
+sudo firewall-cmd --add-port=3178/udp --permanent
+sudo firewall-cmd --reload
