@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gitea-service-monitor
+  namespace: monitoring
+  labels:
+    release: devops
+spec:
+  namespaceSelector:
+    matchNames:
+      - devops
+  selector:
+    matchLabels:
+      app: gitea-service   # Gitea Service에 붙은 라벨과 맞춰야 함
+  endpoints:
+    - port: http           # Service의 port 이름과 동일해야 함
+      path: /metrics
+      interval: 30s

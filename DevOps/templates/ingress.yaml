@@ -1,0 +1,42 @@
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+  hosts:
+    - host: gitea.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: gitea-service
+              port:
+                number: 3000
+    - host: jenkins.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: jenkins-service
+              port:
+                number: 8080
+    - host: code.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: code-server
+              port:
+                number: 8080
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - gitea.shseo0308.duckdns.org
+        - jenkins.shseo0308.duckdns.org
+        - code.shseo0308.duckdns.org
+
+
+        # 작동안되면 values.yaml로

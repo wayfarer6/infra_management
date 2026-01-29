@@ -41,6 +41,9 @@ helm repo update
 # 2. 설치 (가장 가벼운 'single' 모드로 설치됨)
 helm install vmstack vm/victoria-metrics-k8s-stack --namespace monitoring --create-namespace
 
+#Service Monitor 설치
+kubectl apply -f ./monitoring/vmstack-servicemonitor.yaml
+
 # 3. 설치 확인
 kubectl get pods -n monitoring
 echo "Essential Kubernetes applications have been set up."

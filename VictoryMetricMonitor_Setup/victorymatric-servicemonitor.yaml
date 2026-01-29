@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: victorymatric-monitor
+  namespace: monitoring   # Prometheus Operator가 설치된 네임스페이스
+spec:
+  selector:
+    matchLabels:
+      app: victorymatric-app   # victorymatric 네임스페이스 내 서비스 라벨
+  namespaceSelector:
+    matchNames:
+      - victorymatric
+  endpoints:
+    - port: http-metrics       # 서비스에서 노출하는 metrics 포트 이름
+      interval: 30s
+
