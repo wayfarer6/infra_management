@@ -1,6 +1,40 @@
 # infra_management
 
 
+### Anaconda 를 통한 OS 설치 자동화 
+
+- git repo에 있는 kickstarter 폴더 usb에 넣기
+
+How to Use
+Step-by-Step Instructions
+Boot from the Rocky Linux ISO (8 or 9).
+
+When the GRUB menu appears, highlight Install Rocky Linux (but do not press Enter).
+
+Press e to edit the boot parameters.
+
+Find the line starting with:
+
+linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=Rocky-9-3-x86_64-dvd quiet
+Append your Kickstart file URL to the end of the line:
+
+inst.ks=http://<your-ip>/kickstart_rocky9.cfg
+Boot with Ctrl+X or F10 to start the automated installation.
+
+Example
+linux /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=Rocky-9-3-x86_64-dvd quiet inst.ks=http://192.168.1.1/kickstart_rocky9.cfg
+
+⚙️ Kickstart 적용 방법
+ISO에 포함: ks.cfg 파일을 ISO에 삽입 후 부팅 옵션에 inst.ks=cdrom:/ks.cfg 추가
+
+네트워크 경로 사용: inst.ks=http://server/ks.cfg 옵션으로 Kickstart 파일 불러오기
+
+커스텀 ISO 제작: mkisofs 또는 xorriso로 Kickstart 포함 ISO 생성
+
+
+출처: https://github.com/fnateghi/rocky-kickstart
+
+### Ansible를 통한 VM 설정 자동화 (추후 적용예정)
 
 # - 기존에 Plane과 Element Server Suite도 있음을 감안하고 설계함
 
