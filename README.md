@@ -74,6 +74,14 @@ Ingress: 각 네임 스페이스별로 정의 됨, Ingress Controller(NGINX, Tra
 - VictoriaMetrics
 
 
+## Maintenance
+
+- 소규모 기업이나 단체라도 private repo가 일관성, 보안성, 안정성 측면에서 뛰어나기에 도입!
+- 보안이 검증된 repo만 등록하여 보안 문제 차단.
+- 업데이트가 필요한 경우 안정된 버전으로 업데이트 가능!
+- 외부 repo 캐싱으로 외부 레포지토리 중단시 대체 가능
+- 외부 repo의 우선순위를 낮게 리눅스를 설정해서 병행 사용 가능 (경우에 따라 캐시 되지 않은 패키지의 설치를 위해서임)
+
 ### 기타 
 
 - 편의성을 위해  wireguard 사용!
