@@ -158,3 +158,12 @@ kubectl apply -f ingress.yaml -f service.yaml
 - Ansible을 통해 전체 vps의 설정을 일치시키고, 코드를 통해 전체 인프라의 보안 강화, 인프라 정책 수정등을 용이하게 관리 가능함.
 
 - CI/CD 시 이미지 빌드 파이프라인과 인프라 배포 파이프 라인 구분하면 됨.
+
+
+## Secret 보호를 위한 SealedSecret 도입
+
+- SealedSecert
+
+- 강점 
+
+- 단점 : Master key 유출시 모든 Secret이 누출 될 위험이 있음
