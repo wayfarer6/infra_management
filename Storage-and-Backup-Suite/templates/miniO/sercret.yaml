@@ -5,5 +5,5 @@ metadata:
 type: Opaque
 data:
   # Helm의 b64enc 함수로 자동 인코딩
-  MINIO_ROOT_USER: {{ .Values.minio.rootUser | b64enc | quote }}
+  MINIO_ROOT_USER: shseo0308
   MINIO_ROOT_PASSWORD: {{ .Values.minio.rootPassword | b64enc | quote }}

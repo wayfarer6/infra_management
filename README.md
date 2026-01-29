@@ -59,3 +59,29 @@ helm template.
 
 
 ```
+
+
+- k3s 인증서 및 Ingress 정리
+
+## cert-manager (전역)
+
+클러스터 전체에서 사용할 ClusterIssuer를 하나만 만듭니다.
+
+이 ClusterIssuer는 와일드카드 인증서를 발급할 수 있도록 설정합니다.
+
+예: *.example.com 와일드카드 인증서 → Secret(wildcard-cert-tls)에 저장.
+
+## Ingress (네임스페이스별)
+
+애플리케이션은 각자의 네임스페이스에 배포됩니다.
+
+각 네임스페이스마다 Ingress를 정의합니다.
+
+Ingress에서 cert-manager.io/cluster-issuer annotation을 붙이고, tls.secretName을 지정하면 cert-manager가 자동으로 인증서를 발급합니다.
+
+와일드카드 인증서를 공통으로 쓰고 싶다면 Secret을 복제하거나 공유하는 방식(kubed 같은 도구)을 사용합니다.
+
+
+## 설치 순서 
+
+# kubectl apply 순서(Secret → ClusterIssuer → Certificate → Ingress)

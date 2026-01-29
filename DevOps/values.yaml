@@ -1,18 +1,39 @@
-codeServer:
-  # 외부에서 접속할 때 사용할 비밀번호
-  password: "your-secure-password-here"
-
-gitea:
-  image: gitea/gitea:latest
-  port: 3000
-  sshPort: 22
-  domain: git.local
-  storageSize: 100Gi
-  # SQLite3 사용 시 DB 관련 설정은 생략하거나 아래와 같이 지정
-  databaseType: sqlite3
-
-jenkins:
-  image: jenkins/jenkins:lts
-  port: 8080
-  adminPassword: "your-password"
-  agentPort: 50000 # 슬레이브 노드 연결용
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+  hosts:
+    - host: gitea.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: gitea-service
+              port:
+                number: 3000
+    - host: jenkins.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: jenkins-service
+              port:
+                number: 8080
+    - host: code.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: code-server
+              port:
+                number: 8080
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - gitea.shseo0308.duckdns.org
+        - jenkins.shseo0308.duckdns.org
+        - code.shseo0308.duckdns.org

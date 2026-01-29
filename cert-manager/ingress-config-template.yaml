@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+  namespace: my-namespace # namespace도 실제 서비스가 배포된 네임스페이스로 변경 
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+spec:
+  tls:
+  - hosts:
+    - app.duckdns.org
+    secretName: my-app-tls
+  rules:
+  - host: app.duckdns.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-app-service
+            port:
+              number: 80

@@ -1,3 +1,41 @@
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+  hosts:
+    - host: vaultwarden.shseo0308.duckdns.org  # 실제 도메인으로 변경하세요
+      paths: /
+      pathType: Prefix
+      backend:
+        service:
+          name: vaultwarden-service
+          port:
+            number: 80
+    - host: 2fa.shseo0308.duckdns.org  # 실제 도메인으로 변경하세요
+      paths: /
+      pathType: Prefix
+      backend:
+        service:
+          name: twofactor-service
+          port:
+            number: 8080
+    - host: wireguard.shseo0308.duckdns.org  # 실제 도메인으로 변경하세요
+      paths: /
+      pathType: Prefix
+      backend:
+        service:
+          name: wireguard-service
+          port:
+            number: 51821
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - vaultwarden.shseo0308.duckdns.org
+        - 2fa.shseo0308.duckdns.org
+        - wireguard.shseo0308.duckdns.org
+
+
 twoFactor:
   image: 2fa:latest  # 실제 사용하시는 이미지 이름으로 변경하세요
   replicaCount: 1

@@ -1,5 +1,31 @@
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+  hosts:
+    - host: minio.shseo0308.duckdns.org
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: minio-service
+              port:
+                number: 9000   # API , aws cli 같은 애들이 접근
+        - path: /console
+          pathType: Prefix
+          backend:
+            service:
+              name: minio-service
+              port:
+                number: 9001   # Web Console
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - minio.shseo0308.duckdns.org
+
+
 minio:
   image: minio/minio:latest
   storageSize: 500Gi
-  rootUser: "ssh1032007"
-  rootPassword: "lsm0308@2007Y" # 8자 이상 권장

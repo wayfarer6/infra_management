@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-cert
+  namespace: cert-manager
+spec:
+  secretName: wildcard-cert-tls   # 발급된 인증서가 저장될 Secret 이름
+  dnsNames:
+  - "*.example.com"               # 와일드카드 도메인
+  - "example.com"                 # 루트 도메인도 함께 지정
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
