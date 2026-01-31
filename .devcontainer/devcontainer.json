@@ -1,17 +1,19 @@
 {
-    "name": "Kubernetes Devlopmenet Environment",
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-    "features": {
-        "ghcr.io/devcontainers/features/azure-cli:1": {},
-        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-            "version": "latest",
-            "helm": "latest",
-            "minikube": "latest"
-        },
-        "ghcr.io/devcontainers/features/docker-in-docker": {
-            "version": "latest",
-            "moby": true
-        },
-        "ghcr.io/devcontainers/features/aws-cli":  {}
-    }
+  "name": "Kubernetes Development Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "latest",
+      "helm": "latest",
+      "minikube": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/aws-cli": {}
+  }
 }
