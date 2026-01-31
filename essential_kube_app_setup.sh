@@ -54,11 +54,19 @@ helm install vmstack vm/victoria-metrics-k8s-stack --namespace monitoring --crea
 #Service Monitor 설치
 kubectl apply -f victorymatric-servicemonitor.yaml
 
+
+# Promethus 설치
+
+```bash
+helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+```
+
 # 3. 설치 확인
 kubectl get pods -n monitoring
 echo "Essential Kubernetes applications have been set up."
 
 # Monitoring stack Access
+
 
 # 포트포워딩
 # kubectl port-forward deployment/vmstack-grafana 13400:3000 -n monitoring

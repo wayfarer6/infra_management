@@ -8,7 +8,7 @@ spec:
   type: ClusterIP 
   ports:
     - port: 80           # 서비스가 외부(클러스터 내부)에 노출하는 포트
-      targetPort: 8080   # Deployment 컨테이너의 containerPort와 일치해야 함
+      targetPort: 8443   # Deployment 컨테이너의 containerPort와 일치해야 함
       protocol: TCP
       name: http
   selector:

@@ -1,0 +1,6 @@
+dependencies:
+- name: monitoring
+  repository: file://charts/monitoring
+  version: 0.1.0
+digest: sha256:558110740f5be15d7794e566693dd3de6c78ec2d06a4760ce912e1e172800807
+generated: "2026-01-31T03:28:48.138037474Z"

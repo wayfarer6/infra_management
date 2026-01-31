@@ -1,0 +1,376 @@
+---
+# Source: dev-ops/templates/code-server/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: code-server-pvc
+  labels:
+    app: code-server
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi # values.yaml을 사용하지 않는다면 여기에 직접 하드코딩
+  storageClassName: standard  # Stateful 할 필요가 없음
+---
+# Source: dev-ops/templates/gitea/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: standard
+---
+# Source: dev-ops/templates/jenkins/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+  storageClassName: standard
+---
+# Source: dev-ops/templates/code-server/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  # 이 이름이 DNS 주소의 주인공이 됩니다.
+  name: code-server-svc
+spec:
+  # 클러스터 내부 IP만 할당 (Ingress를 통해 외부 노출할 것이므로)
+  type: ClusterIP 
+  ports:
+    - port: 80           # 서비스가 외부(클러스터 내부)에 노출하는 포트
+      targetPort: 8443   # Deployment 컨테이너의 containerPort와 일치해야 함
+      protocol: TCP
+      name: http
+  selector:
+    # 중요: Deployment의 template.metadata.labels와 정확히 일치해야 연결됨
+    app: code-server
+---
+# Source: dev-ops/templates/gitea/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-http-svc
+  namespace: devops
+spec:
+  type: ClusterIP
+  selector:
+    app: gitea
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+# Source: dev-ops/templates/gitea/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-ssh-svc
+  namespace: devops
+spec:
+  type: NodePort
+  selector:
+    app: gitea
+  ports:
+    - name: ssh
+      protocol: TCP
+      port: 22
+      targetPort: 22
+      nodePort: 31022
+---
+# Source: dev-ops/templates/jenkins/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+    - port: 50000
+      targetPort: 50000
+      name: agent
+  selector:
+    app: jenkins
+---
+# Source: dev-ops/templates/code-server/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server-deployment
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-server
+  template:
+    metadata:
+      labels:
+        app: code-server
+    spec:
+      securityContext:          # Pod 수준 securityContext
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: alpine
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+          command: ["sh", "-c", "chown -R 1000:1000 /config && chown 1000:1000 /run"]
+          volumeMounts:
+            - name: run-dir
+              mountPath: /run
+            - name: code-server-data
+              mountPath: /config
+      containers:
+        - name: code-server
+          image: lscr.io/linuxserver/code-server:latest
+          ports:
+            - name: http
+              containerPort: 8443
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-ops-secret
+                  key: code-server-password
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Asia/Seoul"
+          securityContext:       # 컨테이너 수준 securityContext
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: code-server-data
+              mountPath: /config
+            - name: run-dir
+              mountPath: /run
+      volumes:
+        - name: code-server-data
+          persistentVolumeClaim:
+            claimName: code-server-pvc
+        - name: run-dir
+          emptyDir: {}
+---
+# Source: dev-ops/templates/gitea/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea-deployment
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      # 볼륨 마운트 시 그룹 권한만 1000으로 지정 (루트 권한은 유지)
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: gitea
+          image: gitea/gitea:latest
+          # runAsUser 설정을 제거하여 이미지가 root로 시작해 스스로 전환하게 둠
+          env:
+            - name: USER_UID
+              value: "1000"
+            - name: USER_GID
+              value: "1000"
+            - name: GITEA_WORK_DIR
+              value: /data
+          ports:
+            - containerPort: 3000
+              name: http
+            - containerPort: 22
+              name: ssh
+          volumeMounts:
+            - name: gitea-data
+              mountPath: /data
+            - name: run-dir
+              mountPath: /run
+      volumes:
+        - name: gitea-data
+          persistentVolumeClaim:
+            claimName: gitea-pvc
+        - name: run-dir
+          emptyDir: {}
+---
+# Source: dev-ops/templates/jenkins/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          env:
+            - name: JENKINS_OPTS
+              value: "--prefix=/jenkins"
+            - name: CASC_JENKINS_CONFIG
+              value: "/var/jenkins_home/casc_configs"
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: jenkins-data
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+---
+# Source: dev-ops/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dev-ops-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+spec:
+  rules:
+    - host: gitea.shseo0308.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitea-svc   # service.yaml의 이름과 일치해야 함
+                port:
+                  number: 3000
+    - host: jenkins.shseo0308.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jenkins-svc
+                port:
+                  number: 8080
+    - host: code.shseo0308.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: code-server-svc
+                port:
+                  number: 80
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - gitea.shseo0308.duckdns.org
+        - jenkins.shseo0308.duckdns.org
+        - code.shseo0308.duckdns.org
+---
+# Source: dev-ops/charts/monitoring/templates/podmonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: devops-pod-monitor
+  namespace: monitoring
+  labels:
+    release: devops
+spec:
+  namespaceSelector:
+    matchNames:
+      - devops
+  selector:
+    matchLabels:
+      app: code-server # 나머지 pod는 monitor이 있기에 상관 x
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+# Source: dev-ops/charts/monitoring/templates/gitea-servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gitea-service-monitor
+  namespace: monitoring
+  labels:
+    release: devops
+spec:
+  namespaceSelector:
+    matchNames:
+      - devops
+  selector:
+    matchLabels:
+      app: gitea   # Gitea Service에 붙은 라벨과 맞춰야 함
+  endpoints:
+    - port: http           # Service의 port 이름과 동일해야 함
+      path: /metrics
+      interval: 30s
+---
+# Source: dev-ops/charts/monitoring/templates/jenkins-servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jenkins-service-monitor
+  namespace: monitoring
+  labels:
+    release: devops
+spec:
+  namespaceSelector:
+    matchNames:
+      - devops
+  selector:
+    matchLabels:
+      app: jenkins # Jenkins Service에 붙은 라벨과 맞춰야 함
+  endpoints:
+    - port: http           # Service의 port 이름과 동일해야 함
+      path: /prometheus    # Jenkins Prometheus 플러그인 endpoint
+      interval: 30s
+# app에 promethuse 플러그인은 별도로 설정해야함.

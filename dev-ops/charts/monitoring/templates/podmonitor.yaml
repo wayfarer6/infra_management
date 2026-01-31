@@ -10,8 +10,7 @@ spec:
     matchNames:
       - devops
   selector:
-    matchLabels:
-      app: code-server # 나머지 pod는 monitor이 있기에 상관 x
+    matchLabels: {}  # 모든 pod 감시 (필터 없음)
   podMetricsEndpoints:
     - port: http
       path: /metrics

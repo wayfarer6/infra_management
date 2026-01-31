@@ -13,37 +13,25 @@ spec:
       labels:
         app: gitea
     spec:
-      securityContext:          # Pod 수준
+      # 볼륨 마운트 시 그룹 권한만 1000으로 지정 (루트 권한은 유지)
+      securityContext:
         fsGroup: 1000
-        runAsUser: 1000
-        runAsGroup: 1000
-      initContainers:
-        - name: fix-permissions
-          image: alpine
-          securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: true
-          command: ["sh", "-c", "chown -R 1000:1000 /data /run"]
-          volumeMounts:
-            - name: gitea-data
-              mountPath: /data
-            - name: run-dir
-              mountPath: /run
       containers:
         - name: gitea
           image: gitea/gitea:latest
+          # runAsUser 설정을 제거하여 이미지가 root로 시작해 스스로 전환하게 둠
+          env:
+            - name: USER_UID
+              value: "1000"
+            - name: USER_GID
+              value: "1000"
+            - name: GITEA_WORK_DIR
+              value: /data
           ports:
             - containerPort: 3000
+              name: http
             - containerPort: 22
-          securityContext:      # 컨테이너 수준
-            allowPrivilegeEscalation: false
-            runAsUser: 1000
-            runAsGroup: 1000
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - CHOWN
+              name: ssh
           volumeMounts:
             - name: gitea-data
               mountPath: /data

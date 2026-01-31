@@ -34,7 +34,6 @@ kubectl rollout restart deployment code-server-deployment -n devops
 # 업그레이드 
 
 ```bash
-
 helm upgrade --install dev-ops . -n devops
 ```
 
@@ -52,4 +51,24 @@ kubectl delete deployment --all -n devops #deploymenet 삭제
 kubectl delete namespace devops
 
 
+```
+
+# pod 상태 확인 
+
+ ```bash
+kubectl describe pod gitea-deployment-5f7d6f4fc6-mxr2x -n devops
+
+```
+
+# pod 로그 조회
+
+```bash
+kubectl describe pod -n devops gitea-deployment-5f64bd44d8-r2lq4
+```
+
+# PVC 삭제
+
+
+```bash
+kubectl delete pvc gitea-pvc -n devops
 ```
