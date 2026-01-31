@@ -24,7 +24,11 @@ spec:
               value: "/var/jenkins_home/casc_configs"
           ports:
             - containerPort: 8080
+              name: http
+              protocol: TCP
             - containerPort: 50000
+              name: agent
+              protocol: TCP
           securityContext:
             runAsUser: 0
           volumeMounts:

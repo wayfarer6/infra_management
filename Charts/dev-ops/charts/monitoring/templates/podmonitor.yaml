@@ -4,7 +4,8 @@ metadata:
   name: devops-pod-monitor
   namespace: monitoring
   labels:
-    release: devops
+    release: kube-prometheus-stack
+    app.kubernetes.io/instance: dev-ops
 spec:
   namespaceSelector:
     matchNames:

@@ -210,3 +210,6 @@ __marimo__/
 # Infra Image Files
 *.vhdl
 *.vhd
+
+# Velero 
+velero*.tar.gz
