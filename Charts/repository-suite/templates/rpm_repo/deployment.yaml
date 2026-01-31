@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: rpm-repo-deployment
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: rpm-repo-server
+    template:
+        metadata:
+            labels:
+                app: rpm-repo-server
+    containers:
+        - name: rpm-repo-server
+          image: rockylinux:latest
+          command: ["/bin/sh", "-c"]
+          args: ["dnf install -y nginx dnf-utils rsync createrepo"
+          ]
+        ports:
+          - containerPort: 80
+        volumeMounts:
+            - name: repo-storage
+              mountPath: /mnt/repo
+            - name: web-server
+              mountPath: /var/www/html/rocky/9/ # 일단 rocky 9 기준

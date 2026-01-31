@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: container-repo-deployment
+    namespace: repository-suite
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: container-repo
+    template:
+        metadata:
+        labels:
+            app : container-repo
+        spec:
+        
+        containers:
+            - name: container-repo
+              image: registry:latest
+              ports:
+                - containerPort: 5000
+              volumeMounts:
+              - name: registry-data
+                mountPath: /var/lib/registry
+        volumes:
+        - name: registry-data
+          mountPath: /var/lib/registry
+          
+            

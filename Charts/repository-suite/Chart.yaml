@@ -1,0 +1,6 @@
+apiVersion: v2
+name: repository-suite
+description: Repository related services (Container Image , Private Package Reop, etc.)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

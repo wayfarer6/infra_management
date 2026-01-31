@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: debian-repo-svc
+spec:
+    type: ClusterIP
+    selector:
+        app: debian-repo
+    ports:
+     - name: http
+        protocol: TCP
+        port: 80
+        targetPort: 80
+
+    

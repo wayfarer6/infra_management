@@ -1,0 +1,21 @@
+persistence:
+  debian-repo:
+    size: 500Gi
+    storageClass: standard
+  rpm-repo:
+    size: 500Gi
+    storageClass: standard
+  container-repo:
+    size: 500Gi
+    sotrageClass: standard
+
+tls:
+  debian-repo: debian.repo.private.shseo0308.duckdns.org
+  rpm-repo: rpm.repo.private.shseo0308.duckdns.org
+  container: container.repo.priavte.shseo0308.duckdns.org
+
+monitoring:
+  enabled: true
+  podMonitor:
+    enabled: true
+    interval: 30s
