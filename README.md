@@ -181,9 +181,11 @@ helm repo update
 helm install sealed-secrets -n kube-system  \
 --set-string fullnameOverride=sealed-secrets-controller \
 sealed-secrets/sealed-secrets
-
-
+#  sealed-secrets-controller를 설치하는 매니페스트를 클러스터에 적용 , 그 안에는 컨트롤러 Deployment뿐만 아니라 CRD(CustomResourceDefinition)도 포함되어 있습니다.
+kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.34.0/controller.yaml
 ````
+
+# 
 
 ### 추가 Devcontainer 사용법
 
@@ -191,15 +193,27 @@ sealed-secrets/sealed-secrets
 - .devcontaienr 내부의 start minikube.sh 실행
 
 ```bash
-KUBESEAL_VERSION='' # Set this to, for example,
+export KUBESEAL_VERSION=0.34.0
 curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION:?}/kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz"
 tar -xvzf kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz kubeseal
 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 ```
 
+### Secret.yaml을 sealed-secrte 전환
+
+```bash
+kubeseal \
+  --controller-namespace kube-system \
+  --controller-name sealed-secrets \
+  --format yaml < Secret.yaml > SealedSecret.yaml
+```
+
+
 ### helm create 
 
 - `helm create 원하는_차트명`
+
+
 
 ### GitRepo의 chart 설치
 

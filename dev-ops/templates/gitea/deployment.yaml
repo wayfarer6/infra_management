@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitea-deployment
+  namespace: devops
 spec:
   replicas: 1
   selector:
@@ -12,30 +13,45 @@ spec:
       labels:
         app: gitea
     spec:
-      securityContext:
-        fsGroup: 1000   # 파일 권한 문제를 방지하기 위해 중요
+      securityContext:          # Pod 수준
+        fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: alpine
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+          command: ["sh", "-c", "chown -R 1000:1000 /data /run"]
+          volumeMounts:
+            - name: gitea-data
+              mountPath: /data
+            - name: run-dir
+              mountPath: /run
       containers:
         - name: gitea
-          image: gitea/gitea
+          image: gitea/gitea:latest
           ports:
             - containerPort: 3000
             - containerPort: 22
-          env:
-            - name: GITEA__database__DB_TYPE
-              value: "sqlite3"
-          securityContext:
+          securityContext:      # 컨테이너 수준
             allowPrivilegeEscalation: false
+            runAsUser: 1000
+            runAsGroup: 1000
             capabilities:
               drop:
                 - ALL
               add:
-                - CHOWN # 파일 소유권 변경을 위해 필요할 수 있음
+                - CHOWN
           volumeMounts:
             - name: gitea-data
               mountPath: /data
+            - name: run-dir
+              mountPath: /run
       volumes:
         - name: gitea-data
           persistentVolumeClaim:
             claimName: gitea-pvc
+        - name: run-dir
+          emptyDir: {}

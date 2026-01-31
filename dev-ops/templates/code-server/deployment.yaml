@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: code-server-deployment
+  namespace: devops
 spec:
   replicas: 1
   selector:
@@ -12,31 +13,56 @@ spec:
       labels:
         app: code-server
     spec:
-      securityContext:
+      securityContext:          # Pod 수준 securityContext
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: alpine
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+          command: ["sh", "-c", "chown -R 1000:1000 /run /config"]
+          volumeMounts:
+            - name: run-dir
+              mountPath: /run
+            - name: code-server-data
+              mountPath: /config
       containers:
         - name: code-server
-          image: "codercom/code-server:latest"
+          image: lscr.io/linuxserver/code-server:latest
           ports:
-            - containerPort: 8080 # code-server 기본 포트는 보통 8080입니다.
+            - name: http
+              containerPort: 8443
           env:
-            - name: PASSWORD # code-server 공식 이미지에서 사용하는 환경변수
+            - name: PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: dev-ops-secret
                   key: code-server-password
-          securityContext:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Asia/Seoul"
+          securityContext:       # 컨테이너 수준 securityContext
+            runAsUser: 1000
+            runAsGroup: 1000
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
           volumeMounts:
             - name: code-server-data
-              mountPath: /home/coder # 설정과 프로젝트가 저장되는 경로
+              mountPath: /config
+            - name: run-dir
+              mountPath: /run
       volumes:
         - name: code-server-data
           persistentVolumeClaim:
             claimName: code-server-pvc
+        - name: run-dir
+          emptyDir: {}
