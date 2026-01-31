@@ -18,15 +18,13 @@ spec:
         runAsGroup: 1000
       containers:
         - name: gitea
-          image: {{ .Values.gitea.image }}
+          image: gitea/gitea
           ports:
             - containerPort: 3000
             - containerPort: 22
           env:
             - name: GITEA__database__DB_TYPE
               value: "sqlite3"
-            - name: GITEA__server__DOMAIN
-              value: {{ .Values.gitea.domain | quote }}
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

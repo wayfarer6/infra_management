@@ -7,4 +7,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.gitea.storageSize }}
+      storage: {{ .Values.persistence.gitea.size }}
+  storageClassName: {{ .Values.persistence.gitea.storageClass }}

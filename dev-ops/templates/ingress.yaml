@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dev-ops-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-duckdns"
+spec:
+  rules:
+    - host: {{ .Values.tls.gitea.domain}}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitea-svc   # service.yaml의 이름과 일치해야 함
+                port:
+                  number: 3000
+    - host: {{ .Values.tls.jenkins.domain}}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jenkins-svc
+                port:
+                  number: 8080
+    - host: {{ .Values.tls.codeServer.domain}}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: code-server-svc
+                port:
+                  number: 80
+  tls:
+    - secretName: wildcard-shseo0308-tls
+      hosts:
+        - {{ .Values.tls.gitea.domain}}
+        - {{ .Values.tls.jenkins.domain}}
+        - {{ .Values.tls.codeServer.domain}}
+        
+

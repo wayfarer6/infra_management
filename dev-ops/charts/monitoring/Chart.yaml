@@ -1,0 +1,6 @@
+apiVersion: v2 # Using Helm Chart API 3 ~
+name: monitoring
+description: A helm chart for monitoring
+type: application
+version: 0.1.0
+appVersion: 0.1.0

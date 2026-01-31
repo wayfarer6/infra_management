@@ -11,8 +11,9 @@ spec:
       - devops
   selector:
     matchLabels:
-      app: jenkins-service # Jenkins Service에 붙은 라벨과 맞춰야 함
+      app: jenkins # Jenkins Service에 붙은 라벨과 맞춰야 함
   endpoints:
     - port: http           # Service의 port 이름과 동일해야 함
       path: /prometheus    # Jenkins Prometheus 플러그인 endpoint
       interval: 30s
+# app에 promethuse 플러그인은 별도로 설정해야함.

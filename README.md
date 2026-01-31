@@ -167,3 +167,44 @@ kubectl apply -f ingress.yaml -f service.yaml
 - 강점 
 
 - 단점 : Master key 유출시 모든 Secret이 누출 될 위험이 있음
+
+- 관리자 콘솔에 kubeseald 설치 필요!
+
+- Sealed Controller 설치
+
+```bash
+helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+helm repo update
+
+
+# 이름 직접 지정
+helm install sealed-secrets -n kube-system  \
+--set-string fullnameOverride=sealed-secrets-controller \
+sealed-secrets/sealed-secrets
+
+
+````
+
+### 추가 Devcontainer 사용법
+
+- rebuild devcontainer
+- .devcontaienr 내부의 start minikube.sh 실행
+
+```bash
+KUBESEAL_VERSION='' # Set this to, for example,
+curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION:?}/kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz"
+tar -xvzf kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz kubeseal
+sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+```
+
+### helm create 
+
+- `helm create 원하는_차트명`
+
+### GitRepo의 chart 설치
+
+```bash
+helm install dev-ops . -n devops
+```
+
+- helm chart 명은 , 소문자, 숫자 하이픈만 사용 

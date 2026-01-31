@@ -1,0 +1,31 @@
+persistence:
+  codeServer:
+    size: 500Gi
+    storageClass: standard
+  gitea:
+    size: 100Gi
+    storageClass: standard
+  jenkins:
+    size: 500Gi
+    storageClass: standard
+
+
+tls:
+  gitea:
+    domain: gitea.shseo0308.duckdns.org
+  jenkins:
+    domain: jenkins.shseo0308.duckdns.org
+  codeServer:
+    domain: code.shseo0308.duckdns.org
+    
+
+monitoring:
+  enabled: true
+  podMonitor:
+    enabled: true
+    interval: 30s
+  serviceMonitor:
+    gitea: true
+    jenkins: true
+    codeServer: false
+

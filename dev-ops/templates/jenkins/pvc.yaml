@@ -7,4 +7,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Gi # 요청하신 대로 500GB 설정
+      storage: {{ .Values.persistence.jenkins.size }}
+  storageClassName: {{ .Values.persistence.jenkins.storageClass}}

@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: codeServer
+      app: code-server
   template:
     metadata:
       labels:
@@ -22,14 +22,14 @@ spec:
           ports:
             - containerPort: 8080 # code-server 기본 포트는 보통 8080입니다.
           env:
-            - name: PASSWORD  # code-server가 인식하는 환경변수명
+            - name: PASSWORD # code-server 공식 이미지에서 사용하는 환경변수
               valueFrom:
                 secretKeyRef:
-                  name: code-server-secret
-                  key: PASSWORD
+                  name: dev-ops-secret
+                  key: code-server-password
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false 
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL

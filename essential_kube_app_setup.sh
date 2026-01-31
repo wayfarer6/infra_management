@@ -32,6 +32,16 @@ EOF
 # 개인 Gmail 계정을 사용하여 Google의 OpenID Connect 서비스를 무료로 이용할 수 있습니다. 
 # 위의 clientID 및 clientSecret 값을 Google Cloud Console에서 OAuth 2.0 클라이언트 ID를 생성하여 얻을 수 있습니다.  feat 제미나이
 
+# Install Prometheus Operator (CRD)
+
+```bash
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+
+```
+
 # Install VictoriaMetrics
 
 # 1. 레포지토리 추가
@@ -42,7 +52,7 @@ helm repo update
 helm install vmstack vm/victoria-metrics-k8s-stack --namespace monitoring --create-namespace
 
 #Service Monitor 설치
-kubectl apply -f ./monitoring/vmstack-servicemonitor.yaml
+kubectl apply -f victorymatric-servicemonitor.yaml
 
 # 3. 설치 확인
 kubectl get pods -n monitoring
